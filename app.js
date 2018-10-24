@@ -41,7 +41,7 @@ var prodSchema = new mongoose.Schema({
 });
 
 var prod = mongoose.model('cat_producto', prodSchema);
-
+var dltProd = mongoose.model('cat_producto', prodSchema);
 
   app.get('/api/v1/quehay', function (req, res) {
     
@@ -84,9 +84,23 @@ var prod = mongoose.model('cat_producto', prodSchema);
   });
   
   app.put('/api/v1/:algo', function (req, res) {
-    res.send('Got a PUT request at /user');
+
+    prod.findOneAndUpdate({ idprod: req.params.algo }, req.body, function(err, updProd) {
+      if (err) throw err;
+    
+      // we have the updated user returned to us
+      console.log(updProd);
+      res.send('Updated el ' + req.params.algo);
+    });    
   });
   
   app.delete('/api/v1/:algo', function (req, res) {
-    res.send('Got a DELETE request at /user');
+    
+    prod.findOneAndRemove({ idprod: req.params.algo }, function(err) {
+      if (err) throw err;    
+          
+      console.log('Producto ' + req.params.algo + ' Borrado.');
+      res.send('Producto ' + req.params.algo + ' Borrado.');
+      
+    });
   });
