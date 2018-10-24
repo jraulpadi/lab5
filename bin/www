@@ -8,6 +8,9 @@ var app = require('../app');
 var debug = require('debug')('lab5:server');
 var http = require('http');
 
+
+
+
 /**
  * Get port from environment and store in Express.
  */
@@ -24,6 +27,31 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+
+
+var mongoose = require('mongoose');
+// Le indicamos a Mongoose que haremos la conexión con Promesas
+//import mongoose from 'mongoose';
+
+mongoose.Promise = global.Promise;
+
+mongoose.connect('mongodb://localhost:27017/inventario',  { useMongoClient: true})
+    .then(() => {
+        // Cuando se realiza la conexión, lanzamos este mensaje por consola
+        console.log("La conexión a la base de datos inventario se ha realizado correctamente");
+    
+        // CREAR EL SERVIDOR WEB CON NODEJS
+        /*
+        app.listen(port, () => {
+            console.log("servidor corriendo en http://localhost:3000");
+        });
+        */
+    })
+    // Si no se conecta correctamente escupimos el error
+    .catch(err => console.log(err));
+
+
+
 
 server.listen(port);
 server.on('error', onError);

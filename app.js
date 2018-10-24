@@ -3,6 +3,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -21,17 +23,43 @@ module.exports = app;
 
 datageneral = [];
 
+var mongoose = require('mongoose');
 
-  app.get('/', function (req, res) {
-    res.send('Hello World!');
+
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+});
+
+
+var prodSchema = new mongoose.Schema({
+  idprod: Number,
+  nomprod: String,
+  cantidad: Number
+});
+
+var prod = mongoose.model('cat_producto', prodSchema);
+
+
+  app.get('/api/v1/quehay', function (req, res) {
+    
+    //var prods = [];
+    
+    prod.find(function (err, prods) {
+      if (err) return console.error(err);
+      console.log(prods);
+      res.send(prods);
+    });    
   });
   
-  app.get('/api/v1', function (req, res) {
-      datos = {};
-      datos.campoid = 1;
-      datos.campodesc = 'Primer campo';
-  
-      res.send(datageneral);
+  app.get('/api/v1/:alguno', function (req, res) {
+    prod.find({idprod: req.params.alguno}, function (err, prods) {
+      if (err) return console.error(err);
+      console.log(prods);
+      res.send(prods);
+    });    
       //res.send('entrando a api por get!');
     });
   
@@ -40,10 +68,18 @@ datageneral = [];
     res.send('Got a POST request');
   });
 
-  app.post('/api/v1/:algo', function (req, res) {
-    res.send('Got a POST request con ' + req.params.algo);
+  app.post('/api/v1/:algo', function (req, res) {   
+    
+    var fluffy = new prod(req.body);
+
+    fluffy.save(function (err, fluffy) {
+      if (err) return console.error(err);
+      //res.send('ingresado en la base');
+      res.send('Got a POST request con ' + req.params.algo);
+    });
+    
     console.log(req.body);
-    datageneral[req.params.algo] = req.body
+    //datageneral[req.params.algo] = req.body
     
   });
   
