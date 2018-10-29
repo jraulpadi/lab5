@@ -10,6 +10,17 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+app.all('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+  res.header("X-Powered-By",' 3.2.1')
+  res.header("Content-Type", "application/json;charset=utf-8");
+  next();
+});
+
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -35,15 +46,15 @@ db.once('open', function() {
 
 
 var prodSchema = new mongoose.Schema({
-  idprod: Number,
-  nomprod: String,
-  cantidad: Number
+  id: Number,
+  nombre: String,
+  valor: Number
 });
 
 var prod = mongoose.model('cat_producto', prodSchema);
 var dltProd = mongoose.model('cat_producto', prodSchema);
 
-  app.get('/api/v1/quehay', function (req, res) {
+  app.get('/api/v1', function (req, res) {
     
     //var prods = [];
     
@@ -55,7 +66,7 @@ var dltProd = mongoose.model('cat_producto', prodSchema);
   });
   
   app.get('/api/v1/:alguno', function (req, res) {
-    prod.find({idprod: req.params.alguno}, function (err, prods) {
+    prod.find({id: req.params.alguno}, function (err, prods) {
       if (err) return console.error(err);
       console.log(prods);
       res.send(prods);
@@ -75,7 +86,7 @@ var dltProd = mongoose.model('cat_producto', prodSchema);
     fluffy.save(function (err, fluffy) {
       if (err) return console.error(err);
       //res.send('ingresado en la base');
-      res.send('Got a POST request con ' + req.params.algo);
+      res.send(req.body);
     });
     
     console.log(req.body);
@@ -85,7 +96,7 @@ var dltProd = mongoose.model('cat_producto', prodSchema);
   
   app.put('/api/v1/:algo', function (req, res) {
 
-    prod.findOneAndUpdate({ idprod: req.params.algo }, req.body, function(err, updProd) {
+    prod.findOneAndUpdate({ id: req.params.algo }, req.body, function(err, updProd) {
       if (err) throw err;
     
       // we have the updated user returned to us
@@ -96,7 +107,7 @@ var dltProd = mongoose.model('cat_producto', prodSchema);
   
   app.delete('/api/v1/:algo', function (req, res) {
     
-    prod.findOneAndRemove({ idprod: req.params.algo }, function(err) {
+    prod.findOneAndRemove({ id: req.params.algo }, function(err) {
       if (err) throw err;    
           
       console.log('Producto ' + req.params.algo + ' Borrado.');
