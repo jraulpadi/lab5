@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
@@ -101,7 +102,7 @@ var dltProd = mongoose.model('cat_producto', prodSchema);
     
       // we have the updated user returned to us
       console.log(updProd);
-      res.send('Updated el ' + req.params.algo);
+      res.json('Updated el ' + req.params.algo);
     });    
   });
   
